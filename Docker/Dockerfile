@@ -23,6 +23,9 @@ RUN ls /tmp/duoauthproxy-latest-src/
 WORKDIR /tmp/duoauthproxy-latest-src/
 RUN make
 RUN ./duoauthproxy-build/install --install-dir /opt/duoauthproxy --service-user duo_authproxy_svc --log-group duo_authproxy_grp --create-init-script yes
+WORKDIR /
+RUN rm -Rf /tmp/duoauthproxy-latest-src.tgz
+RUN rm -Rf /tmp/duoauthproxy-latest-src
 RUN chown -R duo:duo /opt/duoauthproxy
 RUN chown -R duo:duo /etc/duoauthproxy
 USER duo
