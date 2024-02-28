@@ -10,6 +10,7 @@
       - 55389:55389
     volumes:
       - ./duoauthproxy/authproxy.cfg:/opt/duoauthproxy/conf/authproxy.cfg
+      - ./duoauthproxy/log/:/etc/duoauthproxy/log/
 ```
 
 ### Duo Config Example
