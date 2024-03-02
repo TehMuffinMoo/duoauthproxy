@@ -24,9 +24,10 @@ jobs:
           Write-Host $DuoAuthProxyLatestVersion
       - name: Get Latest Package/Docker Container Version
         run: |
-          manifest=$(curl -X GET https://docker.pkg.github.com/v2/TehMuffinMoo/duoauthproxy/latest/manifests/$GITHUB_SHA -u $GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }} | jq '.')
           {
-            echo "manifest=$manifest"
+            echo "manifest<<EOF"
+            $(curl -X GET https://docker.pkg.github.com/v2/TehMuffinMoo/duoauthproxy/latest/manifests/$GITHUB_SHA -u $GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }} | jq '.')
+            echo EOF
           } >> "$GITHUB_ENV"
 #      - name: Checkout
 #        uses: actions/checkout@v2.3.4
