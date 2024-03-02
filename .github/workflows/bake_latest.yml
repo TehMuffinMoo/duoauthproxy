@@ -30,8 +30,8 @@ jobs:
             curl -X GET https://docker.pkg.github.com/v2/TehMuffinMoo/duoauthproxy/latest/manifests/$GITHUB_SHA -u $GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }} | jq '.'
             echo EOF
           } >> "$GITHUB_ENV"
-#      - name: Checkout
-#        uses: actions/checkout@v2.3.4
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
 #      - name: Set up QEMU
 #        uses: docker/setup-qemu-action@v1
 #          platforms: all
