@@ -24,7 +24,8 @@ jobs:
           $DuoAuthProxySrc = Invoke-WebRequest -Method HEAD -Uri "https://dl.duosecurity.com/duoauthproxy-latest-src.tgz"
           $DuoAuthProxySrc.Headers.'Content-Disposition'[0] -match '^attachment; filename=\"duoauthproxy-(.*)-src.tgz\"$'
           $DuoAuthProxyLatestVersion = $Matches[1]
-          Write-Output "DuoLatestVersion=$($DuoAuthProxyLatestVersion)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+          #Write-Output "DuoLatestVersion=$($DuoAuthProxyLatestVersion)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+          Write-Output "DuoLatestVersion=1.2.3" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
           #Write-Output "DuoLatestVersionMeta=ghcr.io/tehmuffinmoo/duoauthproxy:$($DuoAuthProxyLatestVersion):main" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
           Write-Output "DuoLatestVersionMeta=ghcr.io/tehmuffinmoo/duoauthproxy:123:main" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
           Write-Host $DuoAuthProxyLatestVersion
