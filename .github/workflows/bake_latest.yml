@@ -50,7 +50,8 @@ jobs:
         shell: pwsh
         run: |
           Write-Output "Meta=${{ steps.meta.outputs.tags }}" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
-        if: contains("ghcr.io/tehmuffinmoo/duoauthproxy:6.3.1:main", ${{ steps.meta.outputs.tags }})
+        if: ${{ contains("ghcr.io/tehmuffinmoo/duoauthproxy:env.DuoLatestVersion:main",  steps.meta.outputs.tags }})
+        
 #      - name: Build
 #        uses: docker/build-push-action@v2
 #        with:
