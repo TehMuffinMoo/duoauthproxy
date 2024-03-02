@@ -22,6 +22,14 @@ jobs:
           $DuoAuthProxyLatestVersion = $Matches[1]
           Write-Output "DuoLatestVersion=$($DuoAuthProxyLatestVersion)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
           Write-Host $DuoAuthProxyLatestVersion
+      - name: Set the value in bash
+        id: step_one
+        run: |
+          {
+            echo 'JSON_RESPONSE<<EOF'
+            curl https://example.com
+            echo EOF
+          } >> "$GITHUB_ENV"
       - name: Get Latest Package/Docker Container Version
         run: |
           {
