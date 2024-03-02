@@ -25,6 +25,8 @@ jobs:
           $DuoAuthProxySrc.Headers.'Content-Disposition'[0] -match '^attachment; filename=\"duoauthproxy-(.*)-src.tgz\"$'
           $DuoAuthProxyLatestVersion = $Matches[1]
           Write-Output "DuoLatestVersion=$($DuoAuthProxyLatestVersion)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+          #Write-Output "DuoLatestVersionMeta=ghcr.io/tehmuffinmoo/duoauthproxy:$($DuoAuthProxyLatestVersion):main" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+          Write-Output "DuoLatestVersionMeta=ghcr.io/tehmuffinmoo/duoauthproxy:123:main" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
           Write-Host $DuoAuthProxyLatestVersion
       - name: Checkout
         uses: actions/checkout@v2.3.4
@@ -45,16 +47,12 @@ jobs:
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DuoLatestVersion }}
-      - name: Set Version
+      - name: Check if version already exists
+        id: checkVersionExists
         shell: pwsh
         run: |
-          Write-Output "DuoLatestVersion=1.2.3" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
-      - name: Something
-        id: something
-        shell: pwsh
-        run: |
-          Write-Output "Meta=${{ steps.meta.outputs.tags }}" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
-        if: steps.meta.outputs.tags == "ghcr.io/tehmuffinmoo/duoauthproxy:${{env.DuoLatestVersion}}:main"
+          Write-Host "Whoop!"
+        if: steps.meta.outputs.tags == env.DuoLatestVersionMeta
         
 #      - name: Build
 #        uses: docker/build-push-action@v2
