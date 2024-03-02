@@ -27,7 +27,7 @@ jobs:
         run: |
           {
             echo 'manifest<<EOF'
-            curl -X GET https://docker.pkg.github.com/v2/TehMuffinMoo/duoauthproxy/latest/manifests/$GITHUB_SHA -u $GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }} | jq '.'
+            curl -X GET https://ghcr.io/v2/TehMuffinMoo/duoauthproxy/manifests/$GITHUB_SHA -u $GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }} | jq '.'
             echo EOF
           } >> "$GITHUB_ENV"
       - name: Checkout
