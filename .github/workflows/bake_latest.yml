@@ -50,7 +50,7 @@ jobs:
           context: .
           file: ./Docker/Dockerfile
           push: true
-          tags: ghcr.io/tehmuffinmoo/duoauthproxy:latest, ghcr.io/tehmuffinmoo/duoauthproxy:{{ env.DuoLatestVersion }}
+          tags: ghcr.io/tehmuffinmoo/duoauthproxy:latest, ghcr.io/tehmuffinmoo/duoauthproxy:${{ env.DuoLatestVersion }}
           build-args: |
             BUILD_COMMIT=${{ github.sha }}
             BUILD_BRANCH=${{ github.ref_name }}
