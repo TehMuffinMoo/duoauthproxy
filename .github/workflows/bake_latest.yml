@@ -1,4 +1,4 @@
-name: Build release-tags
+name: Build Container
 
 on:
   workflow_dispatch:
@@ -17,51 +17,52 @@ jobs:
       packages: write
       contents: read
     steps:
-      - name: Get Latest Duo Auth Proxy Version
-        id: getLatestDuoVersion
+      - name: Get Latest Duo Auth Proxy & Package Versions
+        id: getVersions
         shell: pwsh
         run: |
           $DuoAuthProxySrc = Invoke-WebRequest -Method HEAD -Uri "https://dl.duosecurity.com/duoauthproxy-latest-src.tgz"
           $DuoAuthProxySrc.Headers.'Content-Disposition'[0] -match '^attachment; filename=\"duoauthproxy-(.*)-src.tgz\"$'
           $DuoAuthProxyLatestVersion = $Matches[1]
-          #Write-Output "DuoLatestVersion=$($DuoAuthProxyLatestVersion)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
-          Write-Output "DuoLatestVersion=1.2.3" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
-          #Write-Output "DuoLatestVersionMeta=ghcr.io/tehmuffinmoo/duoauthproxy:$($DuoAuthProxyLatestVersion):main" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
-          Write-Output "DuoLatestVersionMeta=ghcr.io/tehmuffinmoo/duoauthproxy:123:main" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
-          Write-Host $DuoAuthProxyLatestVersion
+
+          $DuoAuthProxyPackages = Invoke-RestMethod "https://api.github.com/users/tehmuffinmoo/packages/container/duoauthproxy/versions" -Headers @{'Authorization' = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+          $DuoAuthProxyPackageCurrent = $DuoAuthProxyPackages | where {$_.metadata.container.tags -contains "latest"}
+          $DuoAuthProxyPackageCurrentVersion = ($DuoAuthProxyPackageCurrent.metadata.container.tags | where {$_ -ne "latest"})
+          
+          Write-Output "DuoLatestVersion=$($DuoAuthProxyLatestVersion)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+          Write-Output "DuoPackageCurrentVersion=$($DuoAuthProxyPackageCurrentVersion)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Latest Duo Version: $($DuoAuthProxyLatestVersion)"
+          Write-Host "Current Package Version: $($DuoAuthProxyPackageCurrentVersion)"
+          
       - name: Checkout
         uses: actions/checkout@v2.3.4
+        
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
         with:
           platforms: all
+        if: env.DuoLatestVersion == env.DuoPackageCurrentVersion
+        
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1.6.0
+        if: env.DuoLatestVersion == env.DuoPackageCurrentVersion
+        
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1.10.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata for the Docker image
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.DuoLatestVersion }}
-      - name: Check if version already exists
-        id: checkVersionExists
-        shell: pwsh
-        run: |
-          Write-Host "Whoop!"
-        if: steps.meta.outputs.tags == env.DuoLatestVersionMeta
+        if: env.DuoLatestVersion == env.DuoPackageCurrentVersion
         
-#      - name: Build
-#        uses: docker/build-push-action@v2
-#        with:
-#          context: .
-#          file: ./Docker/Dockerfile
-#          push: true
-#          tags: ghcr.io/tehmuffinmoo/duoauthproxy:latest, ghcr.io/tehmuffinmoo/duoauthproxy:${{ env.DuoLatestVersion }}
-#          build-args: |
-#            BUILD_COMMIT=${{ github.sha }}
-#            BUILD_BRANCH=${{ github.ref_name }}
+      - name: Build Package
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Docker/Dockerfile
+          push: true
+          tags: ghcr.io/tehmuffinmoo/duoauthproxy:latest, ghcr.io/tehmuffinmoo/duoauthproxy:${{ env.DuoLatestVersion }}
+          build-args: |
+            BUILD_COMMIT=${{ github.sha }}
+            BUILD_BRANCH=${{ github.ref_name }}
+        if: env.DuoLatestVersion == env.DuoPackageCurrentVersion
