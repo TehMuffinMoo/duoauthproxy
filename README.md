@@ -1,5 +1,11 @@
 # Duo Auth Proxy (LDAP/RADIUS) Docker Container
 
+## Updates
+There is a GitHub action setup to run every 12 hours, which will check for newer versions of the Duo Auth Proxy and update the docker package if found.
+
+Each container release will be tagged with the version of Duo Authentication Proxy (i.e `duoauthproxy:6.3.0`), in addition to the `duoauthproxy:latest` tag being available for the newest release.
+
+## Configuration
 ### Docker Compose Example
 ```
   duoauthproxy:
