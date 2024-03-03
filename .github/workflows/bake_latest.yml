@@ -25,9 +25,9 @@ jobs:
           $DuoAuthProxySrc.Headers.'Content-Disposition'[0] -match '^attachment; filename=\"duoauthproxy-(.*)-src.tgz\"$'
           $DuoAuthProxyLatestVersion = $Matches[1]
 
-          $DuoAuthProxyPackages = Invoke-RestMethod "https://api.github.com/users/tehmuffinmoo/packages/container/duoauthproxy/versions" -Headers @{'Authorization' = "Bearer ${{ secrets.GITHUB_TOKEN }}"
-          $DuoAuthProxyPackageCurrent = $DuoAuthProxyPackages | where {$_.metadata.container.tags -contains "latest"}
-          $DuoAuthProxyPackageCurrentVersion = ($DuoAuthProxyPackageCurrent.metadata.container.tags | where {$_ -ne "latest"})
+          $DuoAuthProxyPackages = Invoke-RestMethod "https://api.github.com/users/tehmuffinmoo/packages/container/duoauthproxy/versions" -Headers @{'Authorization' = "Bearer ${{ secrets.GITHUB_TOKEN }}"}
+          $DuoAuthProxyPackageCurrent = $DuoAuthProxyPackages | Where-Object {$_.metadata.container.tags -contains "latest"}
+          $DuoAuthProxyPackageCurrentVersion = ($DuoAuthProxyPackageCurrent.metadata.container.tags | Where-Object {$_ -ne "latest"})
           
           Write-Output "DuoLatestVersion=$($DuoAuthProxyLatestVersion)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
           Write-Output "DuoPackageCurrentVersion=$($DuoAuthProxyPackageCurrentVersion)" | Out-File -FilePath $ENV:GITHUB_ENV -Encoding utf8 -Append
